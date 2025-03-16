@@ -13,16 +13,26 @@ class BinaryTree:
     def __init__(self):
         self.root = None
 
-    def preorder(self, node):
+    def preorder_print(self, node):
         if not node:
             return
         print(node.val, end=' ')
-        self.preorder(node.left_child)
-        self.preorder(node.right_child)
+        self.preorder_print(node.left_child)
+        self.preorder_print(node.right_child)
+
+    def preorder_build(self, level_order_serialized_data, curr_index):
+        if curr_index >= len(level_order_serialized_data) or level_order_serialized_data[curr_index] is None:
+            return None
+        left_child_index = curr_index * 2 + 1
+        right_child_index = curr_index * 2 + 2
+        node = TreeNode(level_order_serialized_data[curr_index])
+        node.left_child = self.preorder_build(level_order_serialized_data, left_child_index)
+        node.right_child = self.preorder_build(level_order_serialized_data, right_child_index)
+        return node
 
     def print_tree_pre_order(self):
         print("Tree in preorder", end=' ')
-        self.preorder(self.root)
+        self.preorder_print(self.root)
         print()
 
     def print_tree_level_order(self):
@@ -66,9 +76,7 @@ class BinaryTreeDeserializer:
         binary_tree = BinaryTree()
         if not serialized_tree:
             return binary_tree
-
         assert BinaryTreeDeserializer.is_full_binary_tree(serialized_tree), "Error: input serialized_tree is not full!"
-
         index = 0
         binary_tree.root = TreeNode(serialized_tree[index])
         q = queue.Queue()
@@ -91,15 +99,28 @@ class BinaryTreeDeserializer:
                     q.put(right_child)
                     node.right_child = right_child
                 index += 1
+        return binary_tree
 
+    @staticmethod
+    def deserialize_level_order_tree_using_preorder_traversal(level_order_serialized_tree):
+        binary_tree = BinaryTree()
+        if not level_order_serialized_tree:
+            return binary_tree
+        assert BinaryTreeDeserializer.is_full_binary_tree(level_order_serialized_tree), \
+            "Error: input serialized_tree is not full!"
+
+        binary_tree.root = binary_tree.preorder_build(level_order_serialized_tree, curr_index=0)
         return binary_tree
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    serialized_tree_1 = [0, 1, 2, 3, None, 5, None]
-    binary_tree = BinaryTreeDeserializer.deserialize_level_order_tree(serialized_tree_1)
+    level_order_serialized_tree = [0, 1, 2, 3, None, 5, None]
+    binary_tree = BinaryTreeDeserializer.deserialize_level_order_tree(level_order_serialized_tree)
     binary_tree.print_tree_pre_order()
     binary_tree.print_tree_level_order()
-
+    # level_order_serialized_tree = [0, 1, 2, 3]
+    binary_tree_built_by_preorder_traversal = \
+        BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_traversal(level_order_serialized_tree)
+    binary_tree_built_by_preorder_traversal.print_tree_level_order()
 
