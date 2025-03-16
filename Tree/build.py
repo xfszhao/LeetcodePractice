@@ -76,7 +76,6 @@ class BinaryTreeDeserializer:
         binary_tree = BinaryTree()
         if not serialized_tree:
             return binary_tree
-        assert BinaryTreeDeserializer.is_full_binary_tree(serialized_tree), "Error: input serialized_tree is not full!"
         index = 0
         binary_tree.root = TreeNode(serialized_tree[index])
         q = queue.Queue()
@@ -106,10 +105,32 @@ class BinaryTreeDeserializer:
         binary_tree = BinaryTree()
         if not level_order_serialized_tree:
             return binary_tree
-        assert BinaryTreeDeserializer.is_full_binary_tree(level_order_serialized_tree), \
-            "Error: input serialized_tree is not full!"
 
         binary_tree.root = binary_tree.preorder_build(level_order_serialized_tree, curr_index=0)
+        return binary_tree
+
+    @staticmethod
+    def deserialize_level_order_tree_using_preorder_iteration(level_order_serialized_tree):
+        binary_tree = BinaryTree()
+        if not level_order_serialized_tree:
+            return binary_tree
+
+        curr_index = 0
+        binary_tree.root = TreeNode(level_order_serialized_tree[curr_index])
+        stack = [(binary_tree.root, curr_index)]
+        while stack:
+            node, curr_index = stack.pop()
+            left_child_index = curr_index * 2 + 1
+            right_child_index = curr_index * 2 + 2
+            if right_child_index < len(level_order_serialized_tree) \
+                    and level_order_serialized_tree[right_child_index] is not None:
+                node.right_child = TreeNode(level_order_serialized_tree[right_child_index])
+                stack.append((node.right_child, right_child_index))
+            if left_child_index < len(level_order_serialized_tree) \
+                    and level_order_serialized_tree[left_child_index] is not None:
+                node.left_child = TreeNode(level_order_serialized_tree[left_child_index])
+                stack.append((node.left_child, left_child_index))
+
         return binary_tree
 
 
@@ -123,4 +144,9 @@ if __name__ == '__main__':
     binary_tree_built_by_preorder_traversal = \
         BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_traversal(level_order_serialized_tree)
     binary_tree_built_by_preorder_traversal.print_tree_level_order()
+
+    binary_tree_built_by_preorder_iteration = \
+        BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_iteration(level_order_serialized_tree)
+    binary_tree_built_by_preorder_iteration.print_tree_level_order()
+
 
