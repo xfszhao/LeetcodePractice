@@ -35,12 +35,13 @@ class BinaryTree:
         self.preorder_print(self.root)
         print()
 
-    def print_tree_level_order(self):
+    def print_tree_level_order_double_loop(self):
         print("Tree in level order", end=' ')
         q = queue.Queue()
         q.put(self.root)
         while not q.empty():
             qsize = q.qsize()
+            print()
             for i in range(qsize):
                 node = q.get()
                 if not node:
@@ -49,6 +50,26 @@ class BinaryTree:
                 print(node.val, end=' ')
                 q.put(node.left_child)
                 q.put(node.right_child)
+        print()
+
+    def print_tree_level_order_double_queue(self):
+        print("Tree in level order", end=' ')
+        curr_q = queue.Queue()
+        curr_q.put(self.root)
+        next_q = queue.Queue()
+        while not curr_q.empty():
+            node = curr_q.get()
+            if node is not None:
+                next_q.put(node.left_child)
+                next_q.put(node.right_child)
+                print(node.val, end=' ')
+            else:
+                print('None', end=' ')
+
+            if curr_q.empty():
+                print()
+                curr_q = next_q
+                next_q = queue.Queue()
         print()
 
 class BinaryTreeDeserializer:
@@ -136,17 +157,17 @@ class BinaryTreeDeserializer:
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    level_order_serialized_tree = [0, 1, 2, 3, None, 5, None]
+    level_order_serialized_tree = [0, 1, 2, 3, None, 5, None, 7]
     binary_tree = BinaryTreeDeserializer.deserialize_level_order_tree(level_order_serialized_tree)
     binary_tree.print_tree_pre_order()
-    binary_tree.print_tree_level_order()
+    binary_tree.print_tree_level_order_double_loop()
     # level_order_serialized_tree = [0, 1, 2, 3]
     binary_tree_built_by_preorder_traversal = \
         BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_traversal(level_order_serialized_tree)
-    binary_tree_built_by_preorder_traversal.print_tree_level_order()
+    binary_tree_built_by_preorder_traversal.print_tree_level_order_double_loop()
 
     binary_tree_built_by_preorder_iteration = \
         BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_iteration(level_order_serialized_tree)
-    binary_tree_built_by_preorder_iteration.print_tree_level_order()
+    binary_tree_built_by_preorder_iteration.print_tree_level_order_double_queue()
 
 
