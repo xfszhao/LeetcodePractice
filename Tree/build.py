@@ -36,7 +36,7 @@ class BinaryTree:
         print()
 
     def print_tree_level_order_double_loop(self):
-        print("Tree in level order", end=' ')
+        print("Tree in level order print_tree_level_order_double_loop")
         q = queue.Queue()
         q.put(self.root)
         while not q.empty():
@@ -53,7 +53,7 @@ class BinaryTree:
         print()
 
     def print_tree_level_order_double_queue(self):
-        print("Tree in level order", end=' ')
+        print("Tree in level order print_tree_level_order_double_queue")
         curr_q = queue.Queue()
         curr_q.put(self.root)
         next_q = queue.Queue()
@@ -70,6 +70,44 @@ class BinaryTree:
                 print()
                 curr_q = next_q
                 next_q = queue.Queue()
+        print()
+
+    def print_tree_level_order_using_tuple(self):
+        print("Tree in level order print_tree_level_order_using_tuple")
+        q = queue.Queue()
+        q.put((self.root, 0))
+        level = 0
+        while not q.empty():
+            prev_level = level
+            node, level = q.get()
+            if level != prev_level:
+                print()
+            if not node:
+                print('None', end=' ')
+                continue
+            print(node.val, end=' ')
+            q.put((node.left_child, level + 1))
+            q.put((node.right_child, level + 1))
+        print()
+
+    def print_tree_level_order_using_dummy_node(self):
+        DUMMY_NODE_VAL = -999
+        print("Tree in level order print_tree_level_order_using_dummy_node")
+        q = queue.Queue()
+        q.put(self.root)
+        q.put(TreeNode(DUMMY_NODE_VAL))
+        while not q.empty():
+            node = q.get()
+            if node.val == DUMMY_NODE_VAL:
+                print()
+                q.put(TreeNode(DUMMY_NODE_VAL))
+                continue
+            if not node:
+                print('None', end=' ')
+                continue
+            print(node.val, end=' ')
+            q.put(node.left_child)
+            q.put(node.right_child)
         print()
 
 class BinaryTreeDeserializer:
@@ -169,5 +207,7 @@ if __name__ == '__main__':
     binary_tree_built_by_preorder_iteration = \
         BinaryTreeDeserializer.deserialize_level_order_tree_using_preorder_iteration(level_order_serialized_tree)
     binary_tree_built_by_preorder_iteration.print_tree_level_order_double_queue()
+    binary_tree_built_by_preorder_iteration.print_tree_level_order_using_tuple()
+    binary_tree_built_by_preorder_iteration.print_tree_level_order_using_dummy_node()
 
 
