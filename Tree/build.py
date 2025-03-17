@@ -98,12 +98,13 @@ class BinaryTree:
         q.put(TreeNode(DUMMY_NODE_VAL))
         while not q.empty():
             node = q.get()
-            if node.val == DUMMY_NODE_VAL:
-                print()
-                q.put(TreeNode(DUMMY_NODE_VAL))
-                continue
             if not node:
                 print('None', end=' ')
+                continue
+            if node.val == DUMMY_NODE_VAL:
+                print()
+                if not q.empty():
+                    q.put(TreeNode(DUMMY_NODE_VAL))
                 continue
             print(node.val, end=' ')
             q.put(node.left_child)
